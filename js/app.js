@@ -6,6 +6,7 @@
 
 	Vue.use(VueResource);
 
+	var endpoint = 'localhost:8080'
 	var filters = {
 		all: function (todos) {
 			return todos;
@@ -43,7 +44,7 @@
 					let self = this;
 					values.forEach(todo => {
 						if(todo.id) {
-							Vue.http.patch('//localhost:8080/' + todo.id,todo);
+							Vue.http.patch('//' + endpoint + '/' + todo.id,todo);
 						}
 					});
 					
@@ -95,7 +96,7 @@
 			createTodo: function(todo) {
 				let result = {};
 				let self = this;
-				Vue.http.post('//localhost:8080', {
+				Vue.http.post('//' + endpoint, {
 					title: todo.title,
 					completed: todo.completed
 				}).then(response => {
@@ -104,7 +105,7 @@
 			},
 
 			removeTodo: function (todo) {
-				Vue.http.delete('//localhost:8080/' + todo.id).then(response => {
+				Vue.http.delete('//' + endpoint + '/' + todo.id).then(response => {
 					var index = this.todos.indexOf(todo);
 					this.todos.splice(index, 1);
 				});
@@ -138,7 +139,7 @@
 
 		beforeMount() {
 			let self = this;
-			Vue.http.get('//localhost:8080').then(response => {
+			Vue.http.get('//' + endpoint).then(response => {
 				let list = JSON.parse(response.bodyText);
 				list.forEach(item => {
 					self.todos.push(item);	

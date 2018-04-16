@@ -1,0 +1,7 @@
+---
+applications:
+- name: todos
+  memory: 1G
+  host: todos
+  buildpack: staticfile_buildpack
+
