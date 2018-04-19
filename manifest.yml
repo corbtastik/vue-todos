@@ -1,7 +1,7 @@
 ---
 applications:
-- name: todos
+- name: todos-java
   memory: 1G
-  host: todos
+  host: todos-java
   buildpack: staticfile_buildpack
 
