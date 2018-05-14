@@ -5,8 +5,6 @@
 	'use strict';
 
 	Vue.use(VueResource);
-	// TODO is there a better way to get this value?
-	var endpoint = '/api'
 	var filters = {
 		all: function (todos) {
 			return todos;
@@ -44,7 +42,7 @@
 					let self = this;
 					values.forEach(todo => {
 						if(todo.id) {
-							Vue.http.patch(endpoint + '/' + todo.id,todo);
+							Vue.http.patch('/api/todo/' + todo.id,todo);
 						}
 					});
 					
@@ -96,7 +94,7 @@
 			createTodo: function(todo) {
 				let result = {};
 				let self = this;
-				Vue.http.post(endpoint, {
+				Vue.http.post('/api/todo', {
 					title: todo.title,
 					completed: todo.completed
 				}).then(response => {
@@ -105,7 +103,7 @@
 			},
 
 			removeTodo: function (todo) {
-				Vue.http.delete(endpoint + '/' + todo.id).then(response => {
+				Vue.http.delete( '/api/todo/' + todo.id).then(response => {
 					var index = this.todos.indexOf(todo);
 					this.todos.splice(index, 1);
 				});
@@ -139,8 +137,10 @@
 
 		beforeMount() {
 			let self = this;
-			Vue.http.get(endpoint).then(response => {
+			Vue.http.get('/api/todos').then(response => {
 				let list = JSON.parse(response.bodyText);
+				// --- meh --- from spring-boot-data-rest
+				// let list = JSON.parse(response.bodyText)._embedded.todos;
 				list.forEach(item => {
 					self.todos.push(item);	
 				});
