@@ -1,10 +1,9 @@
-/*global Vue */
+/*global Vue, todoStorage */
 
 (function (exports) {
 
 	'use strict';
 
-	Vue.use(VueResource);
 	var filters = {
 		all: function (todos) {
 			return todos;
@@ -28,25 +27,17 @@
 
 		// app initial state
 		data: {
-			todos: [],
+			todos: todoStorage.fetch(),
 			newTodo: '',
 			editedTodo: null,
 			visibility: 'all'
 		},
 
-		// watch todos change and save via API
+		// watch todos change for localStorage persistence
 		watch: {
 			todos: {
 				deep: true,
-				handler: function(values) {
-					let self = this;
-					values.forEach(todo => {
-						if(todo.id) {
-							Vue.http.patch('/api/todo/' + todo.id,todo);
-						}
-					});
-					
-				}
+				handler: todoStorage.save
 			}
 		},
 
@@ -84,29 +75,13 @@
 				if (!value) {
 					return;
 				}
-				this.createTodo({
-					title: value,
-					completed: false
-				});
+				this.todos.push({ title: value, completed: false });
 				this.newTodo = '';
 			},
 
-			createTodo: function(todo) {
-				let result = {};
-				let self = this;
-				Vue.http.post('/api/todo', {
-					title: todo.title,
-					completed: todo.completed
-				}).then(response => {
-					self.todos.push(response.body);
-				});				
-			},
-
 			removeTodo: function (todo) {
-				Vue.http.delete( '/api/todo/' + todo.id).then(response => {
-					var index = this.todos.indexOf(todo);
-					this.todos.splice(index, 1);
-				});
+				var index = this.todos.indexOf(todo);
+				this.todos.splice(index, 1);
 			},
 
 			editTodo: function (todo) {
@@ -133,18 +108,6 @@
 			removeCompleted: function () {
 				this.todos = filters.active(this.todos);
 			}
-		},
-
-		beforeMount() {
-			let self = this;
-			Vue.http.get('/api/todos').then(response => {
-				let list = JSON.parse(response.bodyText);
-				// --- meh --- from spring-boot-data-rest
-				// let list = JSON.parse(response.bodyText)._embedded.todos;
-				list.forEach(item => {
-					self.todos.push(item);	
-				});
-			});
 		},
 
 		// a custom directive to wait for the DOM to be updated
