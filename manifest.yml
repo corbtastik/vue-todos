@@ -4,6 +4,5 @@ applications:
   memory: 1G
   routes:
   - route: todos-web.apps.pcf.corbscloud.io
-  - route: todos-web-1-0-0-RELEASE.apps.pcf.corbscloud.io
   buildpack: staticfile_buildpack
 
