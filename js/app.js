@@ -31,7 +31,8 @@
 			todos: [],
 			newTodo: '',
 			editedTodo: null,
-			visibility: 'all'
+			visibility: 'all',
+			endpoint: '/api/'
 		},
 
 		// watch todos change and save via API
@@ -42,7 +43,7 @@
 					let self = this;
 					values.forEach(todo => {
 						if(todo.id) {
-							Vue.http.patch('/api/' + todo.id,todo);
+							Vue.http.patch(this.endpoint + todo.id,todo);
 						}
 					});
 					
@@ -94,7 +95,7 @@
 			createTodo: function(todo) {
 				let result = {};
 				let self = this;
-				Vue.http.post('/api/', {
+				Vue.http.post(this.endpoint, {
 					title: todo.title,
 					completed: todo.completed
 				}).then(response => {
@@ -103,7 +104,7 @@
 			},
 
 			removeTodo: function (todo) {
-				Vue.http.delete( '/api/' + todo.id).then(response => {
+				Vue.http.delete(this.endpoint + todo.id).then(response => {
 					var index = this.todos.indexOf(todo);
 					this.todos.splice(index, 1);
 				});
@@ -137,7 +138,7 @@
 
 		beforeMount() {
 			let self = this;
-			Vue.http.get('/api/').then(response => {
+			Vue.http.get(this.endpoint).then(response => {
 				let list = JSON.parse(response.bodyText);
 				// --- meh --- from spring-boot-data-rest
 				// let list = JSON.parse(response.bodyText)._embedded.todos;
